@@ -1,19 +1,31 @@
+import type {
+  OnInstallHandler,
+  OnNameLookupHandler,
+} from '@metamask/snaps-sdk';
 
-import type { OnInstallHandler, OnNameLookupHandler } from '@metamask/snaps-sdk';
-import { getUserAddress, getWeb3Name, getWeb3PaymentIdName, sendGAEvent } from './utils';
+import {
+  getUserAddress,
+  getWeb3Name,
+  getWeb3PaymentIdName,
+  sendGAEvent,
+} from './utils';
 
 export const onNameLookup: OnNameLookupHandler = async ({ domain }) => {
-  if (!domain) return null;
+  if (!domain) {
+    return null;
+  }
   try {
     let web3Name;
     if (domain.includes('@')) {
       web3Name = getWeb3PaymentIdName();
-      sendGAEvent('paymentIdVersion', {})
+      sendGAEvent('paymentIdVersion', {});
     } else {
       web3Name = getWeb3Name();
-      sendGAEvent('normalVersion', {})
+      sendGAEvent('normalVersion', {});
     }
-    if (!web3Name) return null;
+    if (!web3Name) {
+      return null;
+    }
     if (domain) {
       const tld = domain.split('.').pop();
       if (!tld) {
@@ -23,8 +35,8 @@ export const onNameLookup: OnNameLookupHandler = async ({ domain }) => {
         ? await web3Name.getAddress({ name: domain, chainId: 1 })
         : await web3Name.getAddress(domain);
       if (res) {
-        const address = String(await getUserAddress())
-        sendGAEvent('ResolveName', { domain, address: `addr_${address}` })
+        const address = String(await getUserAddress());
+        sendGAEvent('ResolveName', { domain, address: `addr_${address}` });
       }
       if (res) {
         return {
@@ -42,6 +54,6 @@ export const onNameLookup: OnNameLookupHandler = async ({ domain }) => {
 };
 
 export const onInstall: OnInstallHandler = async () => {
-  const address = String(await getUserAddress())
-  await sendGAEvent('installed', { address: `addr_${address}` })
+  const address = String(await getUserAddress());
+  await sendGAEvent('installed', { address: `addr_${address}` });
 };
