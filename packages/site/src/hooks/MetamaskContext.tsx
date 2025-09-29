@@ -105,7 +105,7 @@ export const MetaMaskProvider = ({ children }: { children: ReactNode }) => {
       let version;
       if (!isLocalSnap(defaultSnapOrigin)) {
         version = await getLatestVersion();
-        console.log('ver', version)
+        console.log('ver', version);
       }
       dispatch({
         type: MetamaskActions.SetInstalled,
@@ -113,6 +113,13 @@ export const MetaMaskProvider = ({ children }: { children: ReactNode }) => {
       });
     }
 
+    if (state.snapsDetected) {
+      detectSnapInstalled().catch(console.error);
+    }
+  }, [state.snapsDetected]);
+
+  // Check if Flask is available - this should run independently for local snaps
+  useEffect(() => {
     const checkIfFlask = async () => {
       dispatch({
         type: MetamaskActions.SetIsFlask,
@@ -120,8 +127,9 @@ export const MetaMaskProvider = ({ children }: { children: ReactNode }) => {
       });
     };
 
-    if (state.snapsDetected) {
-      detectSnapInstalled().catch(console.error);
+    // For local snaps, check Flask independently of snap detection
+    // For published snaps, only check Flask if snaps are detected
+    if (isLocalSnap(defaultSnapOrigin) || state.snapsDetected) {
       checkIfFlask().catch(console.error);
     }
   }, [state.snapsDetected]);
