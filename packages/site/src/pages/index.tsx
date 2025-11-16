@@ -116,11 +116,9 @@ const Index = () => {
       if (!isLocalSnap(defaultSnapOrigin)) {
         version = await getLatestVersion();
       }
-      let installedSnap = await getSnap(version);
+      const installedSnap = await getSnap(version);
       if (!installedSnap) {
         await connectSnap(defaultSnapOrigin, { version });
-        // After connecting, get the snap again to get the updated state
-        installedSnap = await getSnap(version);
       }
       dispatch({
         type: MetamaskActions.SetInstalled,

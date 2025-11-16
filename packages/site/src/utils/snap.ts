@@ -42,11 +42,12 @@ export const connectSnap = async (
 export const getSnap = async (version?: string): Promise<Snap | undefined> => {
   try {
     const snaps = await getSnaps();
-    console.log('ver', version, snaps);
+    console.log('ver', version, snaps)
     return Object.values(snaps).find(
       (snap) =>
         snap.id === defaultSnapOrigin && (!version || snap.version === version),
     );
+
   } catch (error) {
     console.log('Failed to obtain installed snap', error);
     return undefined;
